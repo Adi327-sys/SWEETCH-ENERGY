@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Sweetch Energy — Учёт посещаемости</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { font-family: sans-serif; background: #f0f0f0; padding: 20px; text-align: center; }
+    form, .response { background: white; padding: 20px; border-radius: 12px; max-width: 400px; margin: 20px auto; }
+    input, select, button { width: 90%; padding: 10px; margin: 10px 0; font-size: 16px; border-radius: 8px; border: 1px solid #ccc; }
+    button { background: #28a745; color: white; border: none; }
+    .response { font-weight: bold; margin-top: 10px; }
+  </style>
+</head>
+<body>
+  <h2>Sweetch Energy</h2>
+  <p>Онлайн-отметка прихода и ухода с работы</p>
+  <form id="att-form">
+    <input type="text" id="name" placeholder="Введите ваше имя" required>
+    <select id="action">
+      <option value="Пришёл">Пришёл</option>
+      <option value="Ушёл">Ушёл</option>
+    </select>
+    <input type="hidden" id="device">
+    <button type="submit">Отметиться</button>
+    <div class="response" id="resp"></div>
+  </form>
+
+  <script>
+    document.getElementById("device").value = navigator.userAgent;
+
+    document.getElementById("att-form").addEventListener("submit", e => {
+      e.preventDefault();
+      const name = document.getElementById("name").value;
+      const action = document.getElementById("action").value;
+      const device = document.getElementById("device").value;
+      fetch("https://script.google.com/macros/s/AKfycbxCZfvsO4XcusNnXZjw9zwv9y6sMiKofUql0zZdWmZLJxYy2lM_BXecIVaUSKever3I/exec", {
+        method: "POST",
+        body: new URLSearchParams({ name, action, device })
+      })
+      .then(res => res.text())
+      .then(() => {
+        document.getElementById("resp").textContent = "Отметка сохранена!";
+        document.getElementById("att-form").reset();
+      })
+      .catch(() => {
+        document.getElementById("resp").textContent = "Ошибка. Попробуйте снова.";
+      });
+    });
+  </script>
+</body>
+</html>
